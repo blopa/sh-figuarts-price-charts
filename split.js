@@ -18,6 +18,9 @@ if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir);
 }
 
+// Collect all ASIN codes
+const asinCodes = [];
+
 // Process each item in the array
 for (const item of data) {
     const asin = item.ASIN;
@@ -26,6 +29,7 @@ for (const item of data) {
         continue;
     }
 
+    asinCodes.push(asin);
     const filePath = path.join(outputDir, `${asin}.json`);
 
     try {
@@ -34,6 +38,15 @@ for (const item of data) {
     } catch (err) {
         console.error(`Failed to write file for ASIN ${asin}:`, err);
     }
+}
+
+// Create the index.json file with all ASIN codes
+const indexFilePath = path.join(outputDir, "index.json");
+try {
+    fs.writeFileSync(indexFilePath, JSON.stringify(asinCodes, null, 2), "utf-8");
+    console.log(`Index file created: ${indexFilePath}`);
+} catch (err) {
+    console.error("Failed to write index file:", err);
 }
 
 console.log("All files processed.");
