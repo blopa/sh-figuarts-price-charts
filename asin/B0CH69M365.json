@@ -1,0 +1,20 @@
+{
+  "GTIN": "4573102655530",
+  "ASIN": "B0CH69M365",
+  "parsedPriceHistory": {
+    "amazonPriceHistory": null,
+    "marketplaceNewPriceHistory": null,
+    "marketplaceUsedPriceHistory": null,
+    "salesRankHistory": null,
+    "listPriceHistory": null,
+    "collectiblePriceHistory": null,
+    "refurbishedPriceHistory": null
+  },
+  "title": null,
+  "frequentlyBoughtTogether": null,
+  "listedSince": 0,
+  "itemHeight": -1,
+  "itemLength": -1,
+  "itemWeight": -1,
+  "itemWidth": -1
+}

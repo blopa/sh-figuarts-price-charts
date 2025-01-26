@@ -1,0 +1,72 @@
+{
+  "GTIN": "4549660225430",
+  "ASIN": "B07FQSRVGN",
+  "parsedPriceHistory": {
+    "amazonPriceHistory": [
+      {
+        "date": "2023-06-09T14:36:00.000Z",
+        "priceUSD": null
+      }
+    ],
+    "marketplaceNewPriceHistory": [
+      {
+        "date": "2023-06-09T14:36:00.000Z",
+        "priceUSD": null
+      },
+      {
+        "date": "2024-06-02T14:44:00.000Z",
+        "priceUSD": 462.5
+      },
+      {
+        "date": "2024-07-29T20:12:00.000Z",
+        "priceUSD": 493.08
+      },
+      {
+        "date": "2024-07-30T01:08:00.000Z",
+        "priceUSD": 536.16
+      },
+      {
+        "date": "2024-08-01T17:36:00.000Z",
+        "priceUSD": 523.75
+      },
+      {
+        "date": "2024-08-07T18:16:00.000Z",
+        "priceUSD": 497.55
+      },
+      {
+        "date": "2024-08-15T02:28:00.000Z",
+        "priceUSD": 472.66
+      },
+      {
+        "date": "2024-08-23T02:08:00.000Z",
+        "priceUSD": 449.02
+      },
+      {
+        "date": "2024-08-28T22:48:00.000Z",
+        "priceUSD": null
+      }
+    ],
+    "marketplaceUsedPriceHistory": [
+      {
+        "date": "2023-06-09T14:36:00.000Z",
+        "priceUSD": null
+      }
+    ],
+    "salesRankHistory": [
+      {
+        "date": "2023-06-16T05:28:00.000Z",
+        "priceUSD": null
+      }
+    ],
+    "listPriceHistory": null,
+    "collectiblePriceHistory": null,
+    "refurbishedPriceHistory": null
+  },
+  "title": "Bandai Hobby Dragonball Z SDCC 2018 S.H. Figuarts Super Saiyan God SS Broly Event Exclusive Color Edition",
+  "frequentlyBoughtTogether": null,
+  "listedSince": 3970500,
+  "itemHeight": 0,
+  "itemLength": 0,
+  "itemWeight": 0,
+  "itemWidth": 0
+}

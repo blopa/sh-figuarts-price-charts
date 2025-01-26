@@ -1,0 +1,84 @@
+{
+  "GTIN": "4573102673428",
+  "ASIN": "B0DP3SMCS4",
+  "parsedPriceHistory": {
+    "amazonPriceHistory": [
+      {
+        "date": "2024-12-17T16:24:00.000Z",
+        "priceUSD": 140
+      }
+    ],
+    "marketplaceNewPriceHistory": [
+      {
+        "date": "2024-12-17T16:24:00.000Z",
+        "priceUSD": 140
+      }
+    ],
+    "marketplaceUsedPriceHistory": [
+      {
+        "date": "2024-12-17T16:24:00.000Z",
+        "priceUSD": null
+      }
+    ],
+    "salesRankHistory": [
+      {
+        "date": "2024-12-02T03:28:00.000Z",
+        "priceUSD": null
+      }
+    ],
+    "listPriceHistory": [
+      {
+        "date": "2024-12-09T16:56:00.000Z",
+        "priceUSD": 140
+      },
+      {
+        "date": "2024-12-17T19:40:00.000Z",
+        "priceUSD": null
+      },
+      {
+        "date": "2024-12-24T18:30:00.000Z",
+        "priceUSD": 140
+      },
+      {
+        "date": "2024-12-30T04:56:00.000Z",
+        "priceUSD": null
+      },
+      {
+        "date": "2025-01-06T04:32:00.000Z",
+        "priceUSD": 140
+      },
+      {
+        "date": "2025-01-06T07:40:00.000Z",
+        "priceUSD": null
+      },
+      {
+        "date": "2025-01-13T09:20:00.000Z",
+        "priceUSD": 140
+      },
+      {
+        "date": "2025-01-13T12:44:00.000Z",
+        "priceUSD": null
+      },
+      {
+        "date": "2025-01-20T14:32:00.000Z",
+        "priceUSD": 140
+      },
+      {
+        "date": "2025-01-21T06:06:00.000Z",
+        "priceUSD": null
+      }
+    ],
+    "collectiblePriceHistory": null,
+    "refurbishedPriceHistory": null
+  },
+  "title": "TAMASHII NATIONS - Dragon Ball - Son Goku & Bulma FiguartsZERO Collectible Figure",
+  "frequentlyBoughtTogether": [
+    "B0DJQ95ZN8",
+    "B0DJQ9RRLZ"
+  ],
+  "listedSince": 7341210,
+  "itemHeight": 180,
+  "itemLength": 292,
+  "itemWeight": -1,
+  "itemWidth": 241
+}

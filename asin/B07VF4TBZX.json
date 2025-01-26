@@ -1,0 +1,100 @@
+{
+  "GTIN": "4573102567994",
+  "ASIN": "B07VF4TBZX",
+  "parsedPriceHistory": {
+    "amazonPriceHistory": [
+      {
+        "date": "2024-10-28T17:40:00.000Z",
+        "priceUSD": null
+      }
+    ],
+    "marketplaceNewPriceHistory": [
+      {
+        "date": "2024-10-28T17:40:00.000Z",
+        "priceUSD": null
+      }
+    ],
+    "marketplaceUsedPriceHistory": [
+      {
+        "date": "2024-10-28T17:40:00.000Z",
+        "priceUSD": null
+      }
+    ],
+    "salesRankHistory": [
+      {
+        "date": "2024-10-28T17:40:00.000Z",
+        "priceUSD": null
+      },
+      {
+        "date": "2024-11-07T08:40:00.000Z",
+        "priceUSD": 9432.16
+      },
+      {
+        "date": "2024-11-08T09:08:00.000Z",
+        "priceUSD": 9438.82
+      },
+      {
+        "date": "2024-11-15T01:42:00.000Z",
+        "priceUSD": null
+      },
+      {
+        "date": "2024-11-22T12:56:00.000Z",
+        "priceUSD": 9640.16
+      },
+      {
+        "date": "2024-11-26T06:38:00.000Z",
+        "priceUSD": 9716.99
+      },
+      {
+        "date": "2024-11-27T19:48:00.000Z",
+        "priceUSD": 9726.3
+      },
+      {
+        "date": "2024-12-02T23:20:00.000Z",
+        "priceUSD": 9875.4
+      },
+      {
+        "date": "2024-12-15T01:56:00.000Z",
+        "priceUSD": 10097.4
+      },
+      {
+        "date": "2024-12-27T20:20:00.000Z",
+        "priceUSD": null
+      },
+      {
+        "date": "2025-01-03T07:28:00.000Z",
+        "priceUSD": 10123.2
+      },
+      {
+        "date": "2025-01-04T04:56:00.000Z",
+        "priceUSD": 10125.63
+      },
+      {
+        "date": "2025-01-04T17:16:00.000Z",
+        "priceUSD": 10115.72
+      },
+      {
+        "date": "2025-01-05T11:50:00.000Z",
+        "priceUSD": null
+      },
+      {
+        "date": "2025-01-07T07:48:00.000Z",
+        "priceUSD": 10127.31
+      },
+      {
+        "date": "2025-01-08T02:36:00.000Z",
+        "priceUSD": 10121.04
+      }
+    ],
+    "listPriceHistory": null,
+    "collectiblePriceHistory": null,
+    "refurbishedPriceHistory": null
+  },
+  "title": "Tamashii Nations SDCC 2019 Exclusive S.H. Figuarts Dragonball Golden Frieza Freeza DBZ",
+  "frequentlyBoughtTogether": null,
+  "listedSince": 4496100,
+  "itemHeight": 178,
+  "itemLength": 152,
+  "itemWeight": -1,
+  "itemWidth": 76
+}
