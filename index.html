@@ -35,14 +35,14 @@
     <select
             id="itemSelect"
             v-model="selectedASIN"
-            @change="onItemChange"
+            @change="fetchSelectedItemData"
             class="block w-full p-2 border border-gray-300 rounded"
     >
       <option :value="null" disabled>Select an item...</option>
       <option
               v-for="item in filteredItems"
-              :key="item.ASIN"
-              :value="item.ASIN"
+              :key="item.asin"
+              :value="item.asin"
       >
         {{ item.title }}
       </option>
@@ -53,14 +53,14 @@
   <div v-if="selectedItem" class="bg-white p-4 rounded shadow">
     <h2 class="text-xl font-semibold mb-2">
       {{ selectedItem.title }}
-      <span v-if="selectedItem.ASIN">
+      <span v-if="selectedASIN">
         (
         <a
-                :href="`https://www.amazon.com/dp/${selectedItem.ASIN}/`"
+                :href="`https://www.amazon.com/dp/${selectedASIN}/`"
                 target="_blank"
                 class="text-blue-500 underline hover:text-blue-700"
         >
-          {{ selectedItem.ASIN }}
+          {{ selectedASIN }}
         </a>
         )
       </span>
@@ -104,8 +104,8 @@
       <!-- Product Image -->
       <div class="flex-none">
         <img
-                v-if="selectedItem.ASIN"
-                :src="`https://images.amazon.com/images/P/${selectedItem.ASIN}.jpg`"
+                v-if="selectedASIN"
+                :src="`https://images.amazon.com/images/P/${selectedASIN}.jpg`"
                 :alt="selectedItem.title"
                 class="w-48 h-auto object-contain border border-gray-200 rounded"
                 @error="onImageError"
@@ -127,9 +127,10 @@
   createApp({
     data() {
       return {
-        items: [],           // Only valid items
+        items: [],           // List of items from index.json
         searchQuery: '',     // For filtering items by title
         selectedASIN: null,  // The selected item's ASIN
+        selectedItem: null,  // Full details of the selected item
         chartInstance: null  // For the Chart.js instance
       };
     },
@@ -145,42 +146,32 @@
         return this.items.filter(item =>
                 item.title.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
-      },
-      /**
-       * Finds the selected item by ASIN in the items array.
-       */
-      selectedItem() {
-        if (!this.selectedASIN) return null;
-        return this.items.find(item => item.ASIN === this.selectedASIN) || null;
       }
     },
     methods: {
-      async fetchData() {
+      async fetchIndexData() {
         try {
-          // Fetch local JSON file (adjust path if needed)
-          const response = await fetch('figuarts_products_prices.json');
+          const response = await fetch('asin/index.json');
           if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error('Failed to fetch index.json');
           }
-          const rawData = await response.json();
-
-          // Filter out items that are null, missing a title, or have title === ''
-          const validItems = [];
-          rawData.forEach(item => {
-            if (!item || !item.title || item.title.trim() === '') {
-              // Log ASIN if present
-              console.log('Ignoring item with ASIN:', item?.ASIN || '(no ASIN)', 'due to missing or null title');
-            } else {
-              validItems.push(item);
-            }
-          });
-          this.items = validItems;
+          this.items = await response.json();
         } catch (error) {
-          console.error('Error fetching data:', error);
+          console.error('Error fetching index data:', error);
         }
       },
-      onItemChange() {
-        this.renderChart();
+      async fetchSelectedItemData() {
+        if (!this.selectedASIN) return;
+        try {
+          const response = await fetch(`asin/${this.selectedASIN}.json`);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch data for ASIN: ${this.selectedASIN}`);
+          }
+          this.selectedItem = await response.json();
+          this.renderChart();
+        } catch (error) {
+          console.error('Error fetching selected item data:', error);
+        }
       },
       /**
        * Convert Keepa "listedSince" to a JavaScript Date.
@@ -320,7 +311,7 @@
       }
     },
     mounted() {
-      this.fetchData();
+      this.fetchIndexData();
     }
   }).mount('#app');
 </script>
