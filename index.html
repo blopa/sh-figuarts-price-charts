@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SH Figuarts Prices Charts</title>
+  <!-- Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Vue 3 (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+  <!-- Chart.js (CDN) - UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <!-- date-fns (CDN) and the date-fns adapter for Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body class="bg-gray-50 p-4">
+<div id="app" class="container mx-auto">
+  <h1 class="text-2xl font-bold mb-4">SH Figuarts Price Charts</h1>
+
+  <!-- Search Input -->
+  <div class="mb-4">
+    <label for="searchInput" class="block mb-2 font-semibold">Search for Item (by title):</label>
+    <input
+            v-model="searchQuery"
+            id="searchInput"
+            type="text"
+            class="block w-full p-2 border border-gray-300 rounded"
+            placeholder="Type to filter items..."
+    />
+  </div>
+
+  <!-- Item Dropdown -->
+  <div class="mb-4">
+    <label class="block mb-2 font-semibold" for="itemSelect">Choose Item:</label>
+    <select
+            id="itemSelect"
+            v-model="selectedASIN"
+            @change="onItemChange"
+            class="block w-full p-2 border border-gray-300 rounded"
+    >
+      <option :value="null" disabled>Select an item...</option>
+      <option
+              v-for="item in filteredItems"
+              :key="item.ASIN"
+              :value="item.ASIN"
+      >
+        {{ item.title }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Item Details -->
+  <div v-if="selectedItem" class="bg-white p-4 rounded shadow">
+    <h2 class="text-xl font-semibold mb-2">
+      {{ selectedItem.title }}
+      <span v-if="selectedItem.ASIN">
+        (
+        <a
+                :href="`https://www.amazon.com/dp/${selectedItem.ASIN}/`"
+                target="_blank"
+                class="text-blue-500 underline hover:text-blue-700"
+        >
+          {{ selectedItem.ASIN }}
+        </a>
+        )
+      </span>
+    </h2>
+
+    <div class="flex flex-col md:flex-row gap-4">
+      <!-- Product info -->
+      <div class="flex-1">
+        <p><strong>GTIN:</strong> {{ selectedItem.GTIN }}</p>
+        <p><strong>Monthly Sold:</strong> {{ selectedItem.monthlySold }}</p>
+        <p>
+          <strong>Listed Since:</strong>
+          {{ formatKeepaDate(selectedItem.listedSince) }}
+        </p>
+        <p>
+          <strong>Dimensions (H x L x W):</strong>
+          {{ selectedItem.itemHeight }} x {{ selectedItem.itemLength }} x {{ selectedItem.itemWidth }}
+        </p>
+        <p><strong>Weight:</strong> {{ selectedItem.itemWeight }}</p>
+
+        <!-- Frequently Bought Together - Now as clickable links -->
+        <p>
+          <strong>Frequently Bought Together:</strong>
+          <span v-if="selectedItem.frequentlyBoughtTogether && selectedItem.frequentlyBoughtTogether.length > 0">
+            <template v-for="(asin, index) in selectedItem.frequentlyBoughtTogether" :key="asin">
+              <a
+                      :href="`https://www.amazon.com/dp/${asin}/`"
+                      target="_blank"
+                      class="text-blue-500 underline hover:text-blue-700"
+              >{{ asin }}</a>
+              <!-- Add comma except after last item -->
+              <span v-if="index < selectedItem.frequentlyBoughtTogether.length - 1">, </span>
+            </template>
+          </span>
+          <span v-else>
+            None
+          </span>
+        </p>
+      </div>
+
+      <!-- Product Image -->
+      <div class="flex-none">
+        <img
+                v-if="selectedItem.ASIN"
+                :src="`https://images.amazon.com/images/P/${selectedItem.ASIN}.jpg`"
+                :alt="selectedItem.title"
+                class="w-48 h-auto object-contain border border-gray-200 rounded"
+                @error="onImageError"
+        />
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Chart Container -->
+    <h3 class="text-lg font-semibold mb-2">Price History</h3>
+    <canvas id="priceChart" width="400" height="200"></canvas>
+  </div>
+</div>
+
+<script>
+  const { createApp } = Vue;
+
+  createApp({
+    data() {
+      return {
+        items: [],           // Only valid items
+        searchQuery: '',     // For filtering items by title
+        selectedASIN: null,  // The selected item's ASIN
+        chartInstance: null  // For the Chart.js instance
+      };
+    },
+    computed: {
+      /**
+       * Returns only those items whose title
+       * matches the search query (case-insensitive).
+       */
+      filteredItems() {
+        if (!this.searchQuery) {
+          return this.items;
+        }
+        return this.items.filter(item =>
+                item.title.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+      },
+      /**
+       * Finds the selected item by ASIN in the items array.
+       */
+      selectedItem() {
+        if (!this.selectedASIN) return null;
+        return this.items.find(item => item.ASIN === this.selectedASIN) || null;
+      }
+    },
+    methods: {
+      async fetchData() {
+        try {
+          // Fetch local JSON file (adjust path if needed)
+          const response = await fetch('figuarts_products_prices.json');
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const rawData = await response.json();
+
+          // Filter out items that are null, missing a title, or have title === ''
+          const validItems = [];
+          rawData.forEach(item => {
+            if (!item || !item.title || item.title.trim() === '') {
+              // Log ASIN if present
+              console.log('Ignoring item with ASIN:', item?.ASIN || '(no ASIN)', 'due to missing or null title');
+            } else {
+              validItems.push(item);
+            }
+          });
+          this.items = validItems;
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      },
+      onItemChange() {
+        this.renderChart();
+      },
+      /**
+       * Convert Keepa "listedSince" to a JavaScript Date.
+       * Keepa’s time = minutes since 2011-01-01 (UTC).
+       */
+      convertKeepaTimeToDate(keepaTime) {
+        const keepaEpoch = new Date(Date.UTC(2011, 0, 1));
+        return new Date(keepaEpoch.getTime() + keepaTime * 60 * 1000);
+      },
+      /**
+       * Returns a formatted date string from a Keepa "listedSince" value.
+       */
+      formatKeepaDate(keepaTime) {
+        if (!keepaTime || isNaN(keepaTime)) {
+          return 'N/A';
+        }
+        const date = this.convertKeepaTimeToDate(keepaTime);
+        return date.toLocaleString();
+      },
+      /**
+       * Handle broken image links by logging or changing the image src if desired.
+       */
+      onImageError(event) {
+        console.warn('Image failed to load:', event.target.src);
+        event.target.src = 'https://via.placeholder.com/120?text=No+Image';
+      },
+      /**
+       * Builds the Chart.js line chart with the current selectedItem’s price histories.
+       */
+      renderChart() {
+        if (this.chartInstance) {
+          this.chartInstance.destroy();
+        }
+        if (!this.selectedItem || !this.selectedItem.parsedPriceHistory) return;
+
+        const {
+          amazonPriceHistory,
+          marketplaceNewPriceHistory,
+          marketplaceUsedPriceHistory,
+          salesRankHistory,
+          listPriceHistory,
+          collectiblePriceHistory,
+          refurbishedPriceHistory
+        } = this.selectedItem.parsedPriceHistory;
+
+        const historyConfigs = [
+          {
+            label: 'Amazon Price (USD)',
+            data: amazonPriceHistory,
+            color: 'rgba(255, 99, 132, 1)'
+          },
+          {
+            label: 'Marketplace New (USD)',
+            data: marketplaceNewPriceHistory,
+            color: 'rgba(54, 162, 235, 1)'
+          },
+          {
+            label: 'Marketplace Used (USD)',
+            data: marketplaceUsedPriceHistory,
+            color: 'rgba(255, 206, 86, 1)'
+          },
+          // Uncomment if you want to re-add Sales Rank:
+          // {
+          //   label: 'Sales Rank',
+          //   data: salesRankHistory,
+          //   color: 'rgba(75, 192, 192, 1)'
+          // },
+          {
+            label: 'List Price (USD)',
+            data: listPriceHistory,
+            color: 'rgba(153, 102, 255, 1)'
+          },
+          {
+            label: 'Collectible Price (USD)',
+            data: collectiblePriceHistory,
+            color: 'rgba(255, 159, 64, 1)'
+          },
+          {
+            label: 'Refurbished Price (USD)',
+            data: refurbishedPriceHistory,
+            color: 'rgba(201, 203, 207, 1)'
+          }
+        ];
+
+        const datasets = [];
+        historyConfigs.forEach(config => {
+          if (!config.data || !Array.isArray(config.data)) return;
+
+          const points = config.data
+                  .filter(entry => entry.date && entry.priceUSD !== undefined)
+                  .map(entry => ({
+                    x: new Date(entry.date),
+                    y: entry.priceUSD
+                  }));
+
+          if (points.length > 0) {
+            datasets.push({
+              label: config.label,
+              data: points,
+              borderColor: config.color,
+              backgroundColor: config.color,
+              fill: false,
+              tension: 0.1
+            });
+          }
+        });
+
+        if (datasets.length > 0) {
+          const ctx = document.getElementById('priceChart').getContext('2d');
+          this.chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: { datasets },
+            options: {
+              responsive: true,
+              scales: {
+                x: {
+                  type: 'time',
+                  time: {
+                    unit: 'day'
+                  },
+                  title: {
+                    display: true,
+                    text: 'Date'
+                  }
+                },
+                y: {
+                  beginAtZero: false,
+                  title: {
+                    display: true,
+                    text: 'Price (USD) / Rank'
+                  }
+                }
+              }
+            }
+          });
+        }
+      }
+    },
+    mounted() {
+      this.fetchData();
+    }
+  }).mount('#app');
+</script>
+</body>
+</html>
